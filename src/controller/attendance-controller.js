@@ -54,7 +54,6 @@ exports.attendanceRegularizeController = () => {
                 data: await attendanceService.regularize(value)
             }))
         } catch (error) {
-            console.log(error)
             _handleException(error, res);
         }
     }

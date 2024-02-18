@@ -9,7 +9,6 @@ const sequelize = new Sequelize(databaseName, databaseUserName, databasePassword
 
 const loadModels = (sequelize) => {
     Models = initModels(sequelize)
-    console.log(Models)
 }
 
 const getModels = () => {
