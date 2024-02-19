@@ -132,9 +132,17 @@ exports.regularize = async (data) => {
                 'validation error'
             );
         }
-
-        existingEntry.checkintime = checkInTime || existingEntry.checkintime;
-        existingEntry.checkouttime = checkOutTime || existingEntry.checkouttime;
+        const finalCheckInValue = checkInTime || existingEntry.checkintime;
+        const finalCheckOutValue = checkOutTime || existingEntry.checkouttime;
+        if (finalCheckOutValue &&
+            new Date(`1970-01-01T${finalCheckInValue}Z`) > new Date(`1970-01-01T${finalCheckOutValue}Z`)) {
+            throw new CustomError(STATUS_CODES.BAD_REQUEST,
+                'check-out time should not be less than check-in time',
+                'validation error'
+            )
+        }
+        existingEntry.checkintime = finalCheckInValue
+        existingEntry.checkouttime = finalCheckOutValue
 
         await existingEntry.save();
 
@@ -173,7 +181,14 @@ exports.regularize = async (data) => {
                 'validation error'
             );
         }
-
+        const checkInDateTime = new Date(`1970-01-01T${checkInTime}Z`);
+        const checkOutDateTime = new Date(`1970-01-01T${checkOutTime}Z`);
+        if (checkInDateTime > checkOutDateTime) {
+            throw new CustomError(STATUS_CODES.BAD_REQUEST,
+                'check-out time should not be less than check-in time',
+                'validation error'
+            );
+        }
         const newCheckIn = await checkIns.create({
             instructordateid: instructorDate.id,
             checkintime: checkInTime,

@@ -18,12 +18,20 @@ exports.validateCheckOutSchema = () => {
 
 exports.validateRegularizeSchema = () => {
     return Joi.object({
-        id: Joi.number().integer().optional(),//id of checkInTable
+        id: Joi.number().integer().optional(),
         instructorId: Joi.number().integer().required(),
         date: Joi.date().iso().required(),
-        checkInTime: Joi.string().pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
-        checkOutTime: Joi.string().pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional()
-    })
+        checkInTime: Joi.when('id', {
+            is: Joi.exist(),
+            then: Joi.string().pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+            otherwise: Joi.string().pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).required()
+        }),
+        checkOutTime: Joi.when('id', {
+            is: Joi.exist(),
+            then: Joi.string().pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).optional(),
+            otherwise: Joi.string().pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/).required()
+        })
+    });
 }
 
 exports.monthlyReportShema = () => {
